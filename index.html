@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREX Academy - Blockchain que Paga para Aprender</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .hero-content {
+            z-index: 10;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00d4ff, #ff0080, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px #00d4ff); }
+            to { filter: drop-shadow(0 0 30px #ff0080); }
+        }
+
+        .tagline {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .cta-button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: linear-gradient(45deg, #ff0080, #ff6b35);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 0, 128, 0.5);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ffed4e;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #00d4ff, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            border-color: #00d4ff;
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .lottery-section {
+            background: linear-gradient(45deg, rgba(255, 0, 128, 0.1), rgba(0, 212, 255, 0.1));
+            padding: 60px 20px;
+            margin: 50px 0;
+            border-radius: 30px;
+            text-align: center;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 100px;
+        }
+
+        .countdown-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffed4e;
+        }
+
+        .countdown-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00d4ff;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff0080, #ff6b35);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 0, 128, 0.4);
+        }
+
+        .drex-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .drex-token {
+            background: linear-gradient(135deg, #ffed4e, #ff6b35);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            color: #0f0f23;
+            font-weight: bold;
+            transform: rotate(-5deg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drex-token:nth-child(even) {
+            transform: rotate(5deg);
+        }
+
+        .drex-token:hover {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .drex-value {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, #00d4ff, #ff0080);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+
+        .timeline-item {
+            padding: 20px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background: #00d4ff;
+            border-radius: 50%;
+            top: 25px;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #ff0080;
+        }
+
+        .floating-drex {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 2.5em; }
+            .tagline { font-size: 1.4em; }
+            .subtitle { font-size: 1em; }
+            .cta-container { flex-direction: column; align-items: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .countdown { flex-direction: column; align-items: center; }
+            .timeline::after { left: 20px; }
+            .timeline-item { width: 100%; padding-left: 60px; }
+            .timeline-item::after { left: 15px; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .registration-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 128, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            z-index: 1000;
+            font-weight: bold;
+            animation: pulse 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-counter" id="counter">
+        🎯 <span id="registered-count">847</span>/1000 Inscritos
+    </div>
+
+    <section class="hero">
+        <canvas id="bg-canvas"></canvas>
+        <div class="hero-content">
+            <h1 class="logo">DREX ACADEMY</h1>
+            <p class="tagline">O Primeiro Curso Blockchain que PAGA para Aprender!</p>
+            <p class="subtitle">Ganhe até R$ 1.000 em tokens DREX enquanto domina Web3 e Blockchain</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">1000</span>
+                    <span class="stat-label">DREX Tokens por Aluno</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">25</span>
+                    <span class="stat-label">Vagas Exclusivas</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">20h</span>
+                    <span class="stat-label">Carga Horária Prática</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">R$ 1</span>
+                    <span class="stat-label">= 1 DREX Token</span>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <a href="#inscricao" class="cta-button cta-primary">🎲 PARTICIPAR DO SORTEIO</a>
+                <a href="#como-funciona" class="cta-button cta-secondary">📖 COMO FUNCIONA</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="lottery-section" id="como-funciona">
+        <h2 class="section-title">🎲 SISTEMA DE SORTEIO EXCLUSIVO</h2>
+        <p style="font-size: 1.3em; margin-bottom: 30px;">
+            <strong>1000 candidatos</strong> se inscrevem → <strong>25 vagas</strong> sorteadas → <strong>Ganhadores</strong> podem faturar até <strong>R$ 1.000</strong>!
+        </p>
+        
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">15</div>
+                <div class="countdown-label">Dias</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">08</div>
+                <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">45</div>
+                <div class="countdown-label">Minutos</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">23</div>
+                <div class="countdown-label">Segundos</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; margin: 30px 0;">
+            <h3 style="color: #ffed4e; margin-bottom: 20px;">🏆 COMO FUNCIONA O SORTEIO:</h3>
+            <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <li style="margin: 10px 0;">✅ <strong>Inscrições Gratuitas:</strong> Qualquer pessoa pode se inscrever</li>
+                <li style="margin: 10px 0;">🎲 <strong>Sorteio Transparente:</strong> Blockchain garante fairness</li>
+                <li style="margin: 10px 0;">🎯 <strong>25 Contemplados:</strong> Seleção aleatória verificável</li>
+                <li style="margin: 10px 0;">💰 <strong>Investimento:</strong> R$ 2.500 apenas para sorteados</li>
+                <li style="margin: 10px 0;">🎁 <strong>ROI Garantido:</strong> Ganhe de volta até 40% em DREX</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">💰 SISTEMA DREX TOKEN</h2>
+        
+        <div style="text-align: center; margin-bottom: 50px;">
+            <p style="font-size: 1.3em; margin-bottom: 30px;">
+                Cada tarefa completada = DREX tokens ganhos = Dinheiro real no seu bolso!
+            </p>
+        </div>
+
+        <div class="drex-showcase">
+            <div class="drex-token">
+                <div class="drex-value">25 DREX</div>
+                <div>Criar Carteira</div>
+                <div style="font-size: 0.8em; margin-top: 5px;">= R$ 25</div>
+            </div>
+            <div class="drex-token">
+                <div class="drex-value">35 DREX</div>
+                <div>Primeira Transação</div>
+                <div style="font-size: 0.8em; margin-top: 5px;">= R$ 35</div>
+            </div>
+            <div class="drex-token">
+                <div class="drex-value">80 DREX</div>
+                <div>Projeto Municipal</div>
+                <div style="font-size: 0.8em; margin-top: 5px;">= R$ 80</div>
+            </div>
+            <div class="drex-token">
+                <div class="drex-value">200 DREX</div>
+                <div>Performance Perfeita</div>
+                <div style="font-size: 0.8em; margin-top: 5px;">= R$ 200</div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎮</span>
+                <h3 class="feature-title">Gamificação Total</h3>
+                <p>Sistema de missões, achievements e rankings que tornam o aprendizado viciante e recompensador.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔐</span>
+                <h3 class="feature-title">Segurança Real</h3>
+                <p>Aprenda a criar carteiras, fazer transações seguras e proteger seus ativos digitais na prática.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🏛️</span>
+                <h3 class="feature-title">Aplicações Municipais</h3>
+                <p>Desenvolva soluções blockchain reais para transformar a administração pública de São Paulo.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">💎</span>
+                <h3 class="feature-title">NFT Certificado</h3>
+                <p>Certificação única em NFT verificável na blockchain, reconhecida pelo mercado.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🌐</span>
+                <h3 class="feature-title">Network Premium</h3>
+                <p>Acesso exclusivo a investidores, startups e líderes do ecossistema blockchain brasileiro.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3 class="feature-title">Implementação Real</h3>
+                <p>Projetos com potencial de implementação real na ADE SAMPA e Prefeitura de São Paulo.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">📅 CRONOGRAMA INTENSIVO - 4 SEMANAS</h2>
+        
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #00d4ff;">Semana 1: Fundamentos Digitais</h3>
+                    <p><strong>Sexta 14h-17h + Online</strong></p>
+                    <ul>
+                        <li>Criar carteira MetaMask (25 DREX)</li>
+                        <li>Configurar 2FA (20 DREX)</li>
+                        <li>Primeira transação (35 DREX)</li>
+                        <li>Quiz fundamentos (40 DREX)</li>
+                    </ul>
+                    <p style="color: #ffed4e;"><strong>Potencial: 120 DREX = R$ 120</strong></p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff0080;">Semana 2: Operações Avançadas</h3>
+                    <p><strong>Sexta 14h-17h + Online</strong></p>
+                    <ul>
+                        <li>Multi-signature setup (40 DREX)</li>
+                        <li>Smart contracts (45 DREX)</li>
+                        <li>DeFi simulation (35 DREX)</li>
+                        <li>Case study municipal (50 DREX)</li>
+                    </ul>
+                    <p style="color: #ffed4e;"><strong>Potencial: 170 DREX = R$ 170</strong></p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #00d4ff;">Semana 3: Aplicações Municipais</h3>
+                    <p><strong>Sexta 14h-17h + Online</strong></p>
+                    <ul>
+                        <li>Proposta blockchain (80 DREX)</li>
+                        <li>Tokenização pública (60 DREX)</li>
+                        <li>Pitch stakeholders (70 DREX)</li>
+                        <li>Peer review (40 DREX)</li>
+                    </ul>
+                    <p style="color: #ffed4e;"><strong>Potencial: 250 DREX = R$ 250</strong></p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff0080;">Semana 4: Demo Day & Certificação</h3>
+                    <p><strong>Sexta 14h-17h + Online</strong></p>
+                    <ul>
+                        <li>Investor pitch (60 DREX)</li>
+                        <li>Network session (40 DREX)</li>
+                        <li>Projeto final (50 DREX)</li>
+                        <li>Apresentação demo (30 DREX)</li>
+                    </ul>
+                    <p style="color: #ffed4e;"><strong>Potencial: 180 DREX = R$ 180</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px;">
+            <h3 style="color: #ffed4e; font-size: 2em;">TOTAL POSSÍVEL: 1000 DREX = R$ 1.000</h3>
+            <p style="margin-top: 15px; font-size: 1.2em;">ROI de até 40% garantido apenas completando as tarefas!</p>
+        </div>
+    </section>
+
+    <section class="section" id="inscricao">
+        <h2 class="section-title">🎲 INSCRIÇÃO NO SORTEIO</h2>
+        
+        <div class="form-container">
+            <form id="registration-form">
+                <div class="form-group">
+                    <label for="name">Nome Completo *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefone/WhatsApp *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profession">Área Profissional *</label>
+                    <select id="profession" name="profession" required>
+                        <option value="">Selecione...</option>
+                        <option value="gestao-publica">Gestão Pública</option>
+                        <option value="startup-tech">Startup/Tech</option>
+                        <option value="investimentos">Investimentos</option>
+                        <option value="consultoria">Consultoria</option>
+                        <option value="academia">Academia/Pesquisa</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience">Experiência com Blockchain *</label>
+                    <select id="experience" name="experience" required>
+                        <option value="">Selecione...</option>
+                        <option value="nenhuma">Nenhuma</option>
+                        <option value="basica">Básica (já ouvi falar)</option>
+                        <option value="intermediaria">Intermediária (já usei)</option>
+                        <option value="avancada">Avançada (trabalho com)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="motivation">Por que quer participar? *</label>
+                    <textarea id="motivation" name="motivation" rows="4" placeholder="Conte-nos sua motivação para participar da DREX Academy..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="terms" name="terms" required style="width: auto; margin-right: 10px;">
+                        Aceito os termos do sorteio e estou ciente de que, se sorteado, precisarei investir R$ 2.500 no curso.
+                    </label>
+                </div>
+                
+                <button type="submit" class="submit-btn pulse" onclick="handleSubmit(event)">
+                    🎲 PARTICIPAR DO SORTEIO GRÁTIS
+                </button>
+                
+                <p style="text-align: center; margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                    Sorteio dia <strong>30/10/2024 às 20h</strong> via blockchain<br>
+                    Resultado transparente e verificável
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">👨‍🏫 SOBRE O INSTRUTOR</h2>
+        
+        <div style="display: flex; gap: 50px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="color: #00d4ff; font-size: 1.8em; margin-bottom: 20px;">
+                    José Soares Sobrinho (Zeh Sobrinho)
+                </h3>
+                <p style="font-size: 1.1em; line-height: 1.6; margin-bottom: 15px;">
+                    Especialista em tecnologias emergentes e economia digital com foco em transformação digital para o setor público.
+                </p>
+                <ul style="line-height: 1.8;">
+                    <li>✅ Consultor em blockchain para governos</li>
+                    <li>✅ Expertise em tokenização e Web3</li>
+                    <li>✅ Pioneer em educação gamificada</li>
+                    <li>✅ Parceiro oficial ADE SAMPA</li>
+                </ul>
+                <div style="margin-top: 30px;">
+                    <p><strong>Website:</strong> <a href="https://mex.eco.br" style="color: #00d4ff;">mex.eco.br</a></p>
+                    <p><strong>E-mail:</strong> zeh.sobrinho@mex.eco.br</p>
+                </div>
+            </div>
+            <div style="flex: 1; min-width: 300px; text-align: center;">
+                <div style="width: 200px; height: 200px; border-radius: 50%; background: linear-gradient
